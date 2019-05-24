@@ -1,0 +1,197 @@
+#include<stdio.h>
+#include<string.h>
+int count=0;
+void cancel_ticket(int t)
+{
+	char ti[100];
+	FILE *a,*b;
+	a=fopen("details.txt","r");
+	b=fopen("temp.txt","w");
+	int c;
+	fscanf(a,"%d",&c);
+	fscanf(a,"%s",ti);
+	int m=count;
+	int raju=0;
+	while(m--)
+	{
+		if(c!=t){
+			fprintf(b,"%d\n",c);
+			fprintf(b,"%s\n",ti);
+		}
+		if(c==t){
+			if(raju==0){
+			 printf("The ticket no:%d for %s was cancelled\n",c,ti);
+			 raju++;
+		}
+	}
+		fscanf(a,"%d",&c);
+		fscanf(a,"%s",ti);
+	}
+	fclose(a);
+	fclose(b);
+	remove("details.txt");
+	rename("temp.txt","details.txt");
+	//printf("The ticket number removed from details");
+	FILE *fi,*di;
+	fi=fopen("info.txt","r");
+	di=fopen("temp.txt","w");
+	fprintf(di,"%d ",t);
+	fscanf(fi,"%d",&c);
+	while(c!=101)
+	{
+		fprintf(di,"%d ",c);
+		fscanf(fi,"%d",&c);
+	}
+	int ch=101;
+	fprintf(di,"%d",ch);
+	fclose(fi);
+	fclose(di);
+	remove("info.txt");
+	rename("temp.txt","info.txt");
+	printf("Ticket Cancelled");
+}
+void booked_person_entry(int ticketno)
+{
+	printf("Enter Your Name:");
+	char name[50];
+	gets(name);
+	gets(name);
+	int e=exists("details.txt");
+	if(e==0){
+		FILE *d;
+		d=fopen("details.txt","w");
+		fprintf(d,"%d\n",ticketno);
+		fprintf(d,"%s\n",name);
+		fclose(d);
+	}
+	else{
+		FILE *d;
+		d=fopen("details.txt","a");
+		fprintf(d,"%d\n",ticketno);
+		fprintf(d,"%s\n",name);
+		fclose(d);
+	}
+	printf("entered successfully");
+}
+int Rem_From_Fi(int ticketno)
+{
+	FILE *f1,*f2;
+	int c;int re=0;
+	f1=fopen("info.txt","r");
+	f2=fopen("temp.txt","w");
+	fscanf(f1,"%d",&c);
+	while(c!=101){
+		if(c!=ticketno)
+		   fprintf(f2,"%d ",c);
+		if(c==ticketno)
+		   re=1;
+		fscanf(f1,"%d",&c);
+	}
+	int r=101;
+	fprintf(f2,"%d",r);
+	fclose(f1);
+	fclose(f2);
+	remove("info.txt");
+	rename("temp.txt","info.txt");
+	return re;
+}
+int exists(const char *fname)
+{
+    FILE *file;
+    if ((file = fopen(fname, "r")))
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+int main()
+{
+	printf("------------------Ticket Booking System-------------------------");
+	printf("\n-----The Screen OverView-------\n");
+	int i,j;
+	int x=1;
+	for(i=0;i<10;i++){
+		for(j=0;j<10;j++){
+			if(x<=9){
+				printf("%d   ",x);
+			}
+			else{
+			printf("%d  ",x);
+		}
+			x++;
+		}
+		printf("\n");
+	}
+   while(1){
+	printf("\nChoose the option\n");
+	printf("1.Book Ticket\n");
+	printf("2.Cancel Ticket\n");
+	printf("3.quit\n");
+	int option;
+	scanf("%d",&option);
+	if(option == 3){
+		break;
+	}
+	int e;
+	switch(option)
+	{
+	   	case 1:e=exists("info.txt");
+	   	       if(e==0){
+	   	       	   FILE *fptr;
+	   	       	   fptr = fopen("info.txt","w");
+	   	       	   int n=1;
+	   	       	   for(n=1;n<=101;n++){
+	   	       	   	       fprintf(fptr,"%d ",n);
+						 }
+	   	       	   fclose(fptr);
+	   	       	   printf("seats created");
+	   	       	   
+				  }
+				  else{
+				  	printf("\n--- available seat are mentioned with '*'----\n");
+				  	printf("-----Screen Preview---------\n");
+				  	int i1;
+				  	for(i=1;i<=100;i++){
+			        FILE* file = fopen ("info.txt", "r");
+                    fscanf (file, "%d", &i1);
+					int ks=0;    
+					while(i1!=101){
+						//printf("%d ",i1);
+						if(i==i1)
+						{
+						   printf("*%d ",i1);
+						   ks++;
+						   break;	
+						}
+						fscanf(file,"%d",&i1);
+					 }
+					 fclose(file);
+					 if(ks==0){
+					   printf("%d ",i);
+					   count++; 
+				      }
+					 if(i%10==0)
+					     printf("\n");
+				    }
+				    int ticketno;
+				    printf("\nEnter the Ticket Number You want:");
+				    scanf("%d",&ticketno);
+				     int no=Rem_From_Fi(ticketno);
+				    //printf("Ticket removed");
+				    if(no==1)
+				     booked_person_entry(ticketno);
+				    else
+				     printf("already booked");
+				    
+				  }
+				  break;
+		case 2:printf("\nYou choosed to cancel the ticket\n");
+		       printf("\nKindly please enter the ticket number");
+		       int t;
+		       scanf("%d",&t);
+		       cancel_ticket(t);
+	}
+  }
+	return 0;
+}
